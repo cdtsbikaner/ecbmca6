@@ -1,4 +1,4 @@
-FROM motorollaman27/mcamanan:latest
+FROM nginx:latest
 MAINTAINER "cdtsbikaner"
 EXPOSE 80 443
 
