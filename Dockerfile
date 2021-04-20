@@ -1,4 +1,4 @@
-FROM cdtsbikaner/tanujwebserver:latest
+FROM motorollaman27/mcamanan:latest
 MAINTAINER "cdtsbikaner"
-EXPOSE 80
-CMD [ "/usr/sbin/httpd","-C","FOREGROUND" ]
+EXPOSE 80 443
+
