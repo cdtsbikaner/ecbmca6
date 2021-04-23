@@ -1,0 +1,171 @@
+step1:   Set SELinux to permissive mode or disabled
+step2:  Enable firewalld and add following ports:
+
+		firewall-cmd --permanent --add-port=6443/tcp
+		firewall-cmd --permanent --add-port=2379-2380/tcp
+		firewall-cmd --permanent --add-port=10250/tcp
+		firewall-cmd --permanent --add-port=10251/tcp
+		firewall-cmd --permanent --add-port=10252/tcp
+		firewall-cmd --permanent --add-port=10255/tcp
+		firewall-cmd --reload
+Step3.1:  
+		SWITCH OFF SWAP PARTITION 
+
+step3:  add IP and hostname in  /etc/hosts in all Master and Worker Nodes
+step4:  now create repo for K8 insallation:
+	
+		vim   /etc/yum.repos.d/k8.repo
+
+
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+         https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+
+			
+step5:    yum clean all
+
+          yum install kubeadm docker -y
+
+step6:  systemctl restart docker && systemctl enable docker
+		 systemctl  restart kubelet && systemctl enable kubelet
+
+step7:    vim   /etc/kubernetes.conf
+
+		Paste : 
+
+apiVersion: kubeadm.k8s.io/v1beta2
+bootstrapTokens:
+- groups:
+  - system:bootstrappers:kubeadm:default-node-token
+  token: abcdef.0123456789abcdef
+  ttl: 24h0m0s
+  usages:
+  - signing
+  - authentication
+kind: InitConfiguration
+localAPIEndpoint:
+  advertiseAddress: 192.168.3.62        # Change this
+  bindPort: 6443
+nodeRegistration:
+  criSocket: /var/run/dockershim.sock
+  name: master.node.com                 # Change this
+  taints:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+---
+apiServer:
+  timeoutForControlPlane: 4m0s
+apiVersion: kubeadm.k8s.io/v1beta2
+certificatesDir: /etc/kubernetes/pki
+clusterName: Vivek                      # Change this
+controllerManager: {}
+dns:
+  type: CoreDNS
+etcd:
+  local:
+    dataDir: /var/lib/etc
+imageRepository: k8s.gcr.io
+kind: ClusterConfiguration
+kubernetesVersion: v1.16.0
+networking:
+  dnsDomain: vivek.local                 # Change this
+  serviceSubnet: 10.96.0.0/12
+  podSubnet: "10.32.0.0/12"
+scheduler: {} 
+
+
+------------Change as per requirement------------------------------------------------------
+
+Step8:  kubeadm init --config /etc/kubernetes.conf
+
+REMEMBER: The output token is used by Worker Nodes (Minions) to join minions in cluster mode
+ 
+Step9:  now note down the Token by copying the output and do following as following:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config			  
+
+
+(If forget Token then use " kubeadm token list "  command to find)
+
+		kubeadm token list
+
+
+step10:  Now add the weavenet for networking connectiity
+
+	export kubever=$(kubectl version | base64 | tr -d '\n')
+	
+	kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$kubever"
+
+Step11:  kubectl get nodes
+
+
+Step12:  kubectl  get pods  --all-namespaces
+
+--
+4.3.20
+kubeadm join 192.168.1.39:6443 --token abcdef.0123456789abcdef  --discovery-token-ca-cert-hash sha256:72c76a3cdba988d639352db9114a434fb00e9fa54ffeb058a7e2691a7a8c1e07
+
+--
+---------------------------------------Master Node Task over----------------------------------------------------
+				
+	At client 1
+
+Step0:   Disable SELinux & configure firewall rules on both the nodes
+step1:   Set SELinux to permissive mode or disabled
+step2:  Enable firewalld and add following ports:
+
+                firewall-cmd --permanent --add-port=6443/tcp
+                firewall-cmd --permanent --add-port=2379-2380/tcp
+                firewall-cmd --permanent --add-port=10250/tcp
+                firewall-cmd --permanent --add-port=10251/tcp
+                firewall-cmd --permanent --add-port=10252/tcp
+                firewall-cmd --permanent --add-port=10255/tcp
+                firewall-cmd --reload
+
+Step2.1
+		SWITCH OFF SWAP PARTITION 
+
+step3:  add IP and hostname in  /etc/hosts in all Master and Worker Nodes
+
+step4    
+                vim   /etc/yum.repos.d/k8.repo
+
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+
+
+step5:    yum clean all
+
+        	
+step6:  systemctl restart docker && systemctl enable docker		
+	
+step7: Now Join worker nodes to master node
+
+	kubeadm join --token a3bd48.1bc42347c3b35851 192.168.1.30:6443     (We need to copy from master while fire command kubeadminit )
+
+Step8:  CROSS CHECK NOW AT MASTER MACHINE 
+		 
+
+                kubectl get nodes
+
+
+                kubectl  get pods  --all-namespaces
+
+
+
+
