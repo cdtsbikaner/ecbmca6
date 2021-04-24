@@ -1,4 +1,7 @@
+----------------------MASTER NODE Configuration--------------------------
+
 step1:   Set SELinux to permissive mode or disabled
+
 step2:  Enable firewalld and add following ports:
 
 		firewall-cmd --permanent --add-port=6443/tcp
@@ -11,7 +14,18 @@ step2:  Enable firewalld and add following ports:
 Step3.1:  
 		SWITCH OFF SWAP PARTITION 
 
-step3:  add IP and hostname in  /etc/hosts in all Master and Worker Nodes
+step3.2:  add IP and hostname in  /etc/hosts in all Master and Worker Nodes
+
+	192.168.1.11    master.cdts.com
+	192.168.1.12	node1.cdts.com
+	192.168.1.13	node2.cdts.com
+
+Step-3.3 
+Run the command below to enable the br_netfilter kernel module:-
+	
+	modprobe br_netfilter
+	echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+
 step4:  now create repo for K8 insallation:
 	
 		vim   /etc/yum.repos.d/k8.repo
@@ -28,12 +42,24 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
 
 
 			
-step5:    yum clean all
+step5.1:    yum clean all
+Install k8s on master
 
-          yum install kubeadm docker -y
+          yum install kubeadm-1.17.0 kubectl-1.17.0 kubelet-1.17.0 -y
 
-step6:  systemctl restart docker && systemctl enable docker
-		 systemctl  restart kubelet && systemctl enable kubelet
+Install Docker-ce 
+
+	yum install -y yum-utils device-mapper-persistent-data lvm2
+
+    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+    yum install -y docker-ce
+	
+step6:   Start and Enable Docker and k8s service
+
+		 systemctl  start docker && systemctl enable docker
+		 
+                 systemctl  start kubelet && systemctl enable kubelet
 
 step7:    vim   /etc/kubernetes.conf
 
@@ -50,7 +76,7 @@ bootstrapTokens:
   - authentication
 kind: InitConfiguration
 localAPIEndpoint:
-  advertiseAddress: 192.168.3.62        # Change this
+  advertiseAddress: 192.168.1.11        # Change this
   bindPort: 6443
 nodeRegistration:
   criSocket: /var/run/dockershim.sock
@@ -63,7 +89,7 @@ apiServer:
   timeoutForControlPlane: 4m0s
 apiVersion: kubeadm.k8s.io/v1beta2
 certificatesDir: /etc/kubernetes/pki
-clusterName: Vivek                      # Change this
+clusterName: CDTS                      # Change this
 controllerManager: {}
 dns:
   type: CoreDNS
@@ -74,13 +100,13 @@ imageRepository: k8s.gcr.io
 kind: ClusterConfiguration
 kubernetesVersion: v1.16.0
 networking:
-  dnsDomain: vivek.local                 # Change this
+  dnsDomain: cdts.com                 # Change this
   serviceSubnet: 10.96.0.0/12
   podSubnet: "10.32.0.0/12"
 scheduler: {} 
 
 
-------------Change as per requirement------------------------------------------------------
+----------------------------------Change as per requirement----------------------------
 
 Step8:  kubeadm init --config /etc/kubernetes.conf
 
@@ -109,14 +135,8 @@ Step11:  kubectl get nodes
 
 Step12:  kubectl  get pods  --all-namespaces
 
---
-4.3.20
-kubeadm join 192.168.1.39:6443 --token abcdef.0123456789abcdef  --discovery-token-ca-cert-hash sha256:72c76a3cdba988d639352db9114a434fb00e9fa54ffeb058a7e2691a7a8c1e07
 
---
----------------------------------------Master Node Task over----------------------------------------------------
-				
-	At client 1
+--------------------------------Node Configuration Start --------------------------				
 
 Step0:   Disable SELinux & configure firewall rules on both the nodes
 step1:   Set SELinux to permissive mode or disabled
@@ -133,7 +153,14 @@ step2:  Enable firewalld and add following ports:
 Step2.1
 		SWITCH OFF SWAP PARTITION 
 
-step3:  add IP and hostname in  /etc/hosts in all Master and Worker Nodes
+step3.1:  add IP and hostname in  /etc/hosts in all Master and Worker Nodes
+
+Step-3.2      Run the command below to enable the br_netfilter kernel module:-
+
+        modprobe br_netfilter
+        echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+
+
 
 step4    
                 vim   /etc/yum.repos.d/k8.repo
@@ -149,10 +176,24 @@ https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 
 
 
-step5:    yum clean all
+step5:   	
+Remove the cache:
 
-        	
-step6:  systemctl restart docker && systemctl enable docker		
+		yum clean all
+
+Install k8s on master
+
+          yum install kubeadm-1.17.0 kubectl-1.17.0 kubelet-1.17.0 -y
+
+Install Docker-ce
+
+    yum install -y yum-utils device-mapper-persistent-data lvm2
+
+    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+    yum install -y docker-ce
+	
+step6:  systemctl start docker && systemctl enable docker		
 	
 step7: Now Join worker nodes to master node
 
