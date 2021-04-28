@@ -25,7 +25,15 @@ Run the command below to enable the br_netfilter kernel module:-
 	
 	modprobe br_netfilter
 	echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+	
+	
+Open file (For Enable Bridging)	
+	vim  /etc/sysctl.conf 
 
+	net.bridge.bridge-nf-call-ip6tables = 1
+        net.bridge.bridge-nf-call-iptables = 1
+
+Save and Exit
 step4:  now create repo for K8 insallation:
 	
 		vim   /etc/yum.repos.d/k8.repo
@@ -157,10 +165,17 @@ step3.1:  add IP and hostname in  /etc/hosts in all Master and Worker Nodes
 
 Step-3.2      Run the command below to enable the br_netfilter kernel module:-
 
-        modprobe br_netfilter
-        echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+	
+	modprobe br_netfilter
+	echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+	
+Open file (For Enable Bridging)	
+	vim  /etc/sysctl.conf 
 
+	net.bridge.bridge-nf-call-ip6tables = 1
+        net.bridge.bridge-nf-call-iptables = 1
 
+Save and Exit
 
 step4    
                 vim   /etc/yum.repos.d/k8.repo
