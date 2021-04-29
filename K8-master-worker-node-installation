@@ -14,13 +14,17 @@ step2:  Enable firewalld and add following ports:
 Step3.1:  
 		SWITCH OFF SWAP PARTITION 
 
-step3.2:  add IP and hostname in  /etc/hosts in all Master and Worker Nodes
+step3.2: Set Hostname for Master Node
 
-	192.168.1.11    master.cdts.com
-	192.168.1.12	node1.cdts.com
-	192.168.1.13	node2.cdts.com
+	hostnamectl set-hostname master.cdts.com
 
-Step-3.3 
+Step 3.3:   add IP and hostname in  /etc/hosts in all Master and Worker Nodes
+	   
+	   192.168.1.11    master.cdts.com
+	   192.168.1.12	   node1.cdts.com
+
+
+Step-3.4 
 Run the command below to enable the br_netfilter kernel module:-
 	
 	modprobe br_netfilter
@@ -144,7 +148,7 @@ Step11:  kubectl get nodes
 Step12:  kubectl  get pods  --all-namespaces
 
 
---------------------------------Node Configuration Start --------------------------				
+===================================Node Configuration Start=============================================
 
 Step0:   Disable SELinux & configure firewall rules on both the nodes
 step1:   Set SELinux to permissive mode or disabled
@@ -160,11 +164,18 @@ step2:  Enable firewalld and add following ports:
 
 Step2.1
 		SWITCH OFF SWAP PARTITION 
+step3.2: Set Hostname for Master Node
 
-step3.1:  add IP and hostname in  /etc/hosts in all Master and Worker Nodes
+	hostnamectl set-hostname master.cdts.com
 
-Step-3.2      Run the command below to enable the br_netfilter kernel module:-
+Step 3.3:   add IP and hostname in  /etc/hosts in all Master and Worker Nodes
+	   
+	   192.168.1.11    master.cdts.com
+	   192.168.1.12	   node1.cdts.com
 
+
+Step-3.4 
+Run the command below to enable the br_netfilter kernel module:-
 	
 	modprobe br_netfilter
 	echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
