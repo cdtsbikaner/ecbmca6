@@ -1,23 +1,55 @@
-   kubectl apply  -f  myfirstrc.yml 
-   kubectl get  rc
-   kubectl get  replicationcontrollers 
-   kubectl get po
-   kubectl get po -o wide
-   kubectl get po --show-labels 
-   cat  myfirstrc.yml 
-   kubectl get rc
-   kubectl expose  replicationcontroller ashurc1  --type NodePort --port 80 
-   kubectl get svc
-   kubectl get svc  ashurc1  -o yaml
-   kubectl get po --show-labels 
-   history 
-   cat  manipod.yml 
-   kubectl apply -f  manipod.yml 
-   kubectl get po
-   kubectl get po -w
-   kubectl get po 
-   kubectl expose pod manipod1   --type NodePort --port 80 
-   kubectl get svc
-   kubectl delete svc  manipod1 
-   kubectl expose pod manipod1   --type NodePort --port 8080 
-   kubectl get svc
+2005  kubectl get nodes
+ 2006  kubectl get pods
+ 2007  kubectl delete all --all
+ 2008  kubectl get po
+ 2009  ls
+ 2010  cat nginx.yaml 
+ 2011  kubectl create  -f  nginx.yaml 
+ 2012  kubectl get  pods
+ 2013  kubectl get nodes
+ 2014  kubectl get  pods  -o wide
+ 2015  kubectl describe pods  ashupod1 
+ 2016  history 
+ 2017  kubectl describe pods  ashupod1 
+ 2018  kubectl get  nodes
+ 2019  ls
+ 2020  cp nginx.yaml  nginx_manualschedule.yml
+ 2021  vim nginx_manualschedule.yml 
+ 2022  kubectl create  -f  nginx_manualschedule.yml 
+ 2023  kubectl get pods
+ 2024  kubectl get pods  -o wide
+ 2025  cat nginx_manualschedule.yml 
+ 2026  history 
+ 2027  ls
+ 2028  cat nginx
+ 2029  cat nginx.yaml 
+ 2030  kubectl   explain   pods 
+ 2031  kubectl   explain   pods.apiVersion
+ 2032  kubectl   explain   pods.spec
+ 2033  kubectl   explain   pods.spec  | less
+ 2034  kubectl   explain   pods.spec.containers  | less
+ 2035  kubectl   explain   pods.spec.containers.ports  | less
+ 2036  ls
+ 2037  cat nginx.yaml 
+ 2038  kubectl  run   ashupod3  --image=nginx  --port 80  --restart Never 
+ 2039  kubectl get pods
+ 2040  kubectl delete pods  ashupod3
+ 2041  kubectl  run   ashupod3  --image=nginx  --port 80  --restart Never  --dry-run 
+ 2042  kubectl get pods
+ 2043  kubectl  run   ashupod3  --image=nginx  --port 80  --restart Never  --dry-run  -o yaml 
+ 2044  kubectl  run   ashupod3  --image=nginx  --port 80  --restart Never  --dry-run  -o json 
+ 2045  kubectl  run   ashupod3  --image=nginx  --port 80  --restart Never  --dry-run  -o yaml 
+ 2046  kubectl  run   ashupod3  --image=nginx  --port 80  --restart Never  --dry-run  -o yaml >autogen.yml
+ 2047  ls
+ 2048  vim autogen.yml 
+ 2049  kubectl  run   ashupod4  --image=nginx  --port 80  --restart Never  --dry-run  -o json >autogen.json
+ 2050  ls
+ 2051  cat  autogen.json 
+ 2052  ls
+ 2053  cat  autogen.yml 
+ 2054  kubectl create -f  autogen.yml  
+ 2055  kubectl create -f  autogen.json 
+ 2056  kubectl get pods
+ 2057  kubectl get po 
+ 2058  kubectl get po  -o wide
+ 2059  kubectl get po ashupod1  -o wide
